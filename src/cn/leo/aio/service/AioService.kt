@@ -12,6 +12,7 @@ import java.util.concurrent.Executors
 
 
 class AioService {
+    //并发线程池，根据业务自定义
     private val executorService = Executors.newFixedThreadPool(80)
     private val channelGroup = AsynchronousChannelGroup.withThreadPool(executorService)
     private val service = AsynchronousServerSocketChannel.open(channelGroup)

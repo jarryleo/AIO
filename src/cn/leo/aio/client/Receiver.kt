@@ -1,13 +1,12 @@
 package cn.leo.aio.client
 
 import cn.leo.aio.utils.Logger
-import java.nio.ByteBuffer
 import java.nio.CharBuffer
 import java.nio.channels.CompletionHandler
 import java.nio.charset.Charset
 
 
-class Receiver : CompletionHandler<kotlin.Int, AioClient> {
+class Receiver : CompletionHandler<Int, AioClient> {
     //接收数据成功，result是数据长度，-1表示异常
     override fun completed(result: Int?, client: AioClient?) {
         val buffer = client?.buffer

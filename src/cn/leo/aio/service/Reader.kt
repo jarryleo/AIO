@@ -6,7 +6,7 @@ import java.nio.channels.CompletionHandler
 import java.nio.charset.Charset
 
 
-class Reader : CompletionHandler<kotlin.Int, Channel> {
+class Reader : CompletionHandler<Int, Channel> {
     override fun completed(result: Int?, attachment: Channel?) {
         val buffer = attachment?.buffer
         buffer?.flip()
