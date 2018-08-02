@@ -15,6 +15,9 @@ class AioClient {
     val buffer = ByteBuffer.allocate(1024)!!
     private var client: AsynchronousSocketChannel? = null
     private var serverAddress: InetSocketAddress? = null
+    private val receiver = Receiver()
+    private val sender = Sender()
+
 
     fun connect(host: String, port: Int) {
         serverAddress = InetSocketAddress(host, port)
@@ -58,13 +61,13 @@ class AioClient {
     fun send(data: ByteArray) {
         if (!client?.isOpen!!) return
         val buf = ByteBuffer.wrap(data)
-        client?.write(buf, this, Sender())
+        client?.write(buf, this, sender)
     }
 
     //接收数据
     fun receive() {
         if (!client?.isOpen!!) return
         buffer.clear()
-        client?.read(buffer, this, Receiver())
+        client?.read(buffer, this, receiver)
     }
 }
