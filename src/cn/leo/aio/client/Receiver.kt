@@ -8,6 +8,7 @@ import java.nio.charset.Charset
 
 
 class Receiver : CompletionHandler<kotlin.Int, AioClient> {
+    //接收数据成功，result是数据长度，-1表示异常
     override fun completed(result: Int?, client: AioClient?) {
         val buffer = client?.buffer
         buffer?.flip()
@@ -17,7 +18,7 @@ class Receiver : CompletionHandler<kotlin.Int, AioClient> {
         charBuffer.flip()
         val data = String(charBuffer.array(), 0, charBuffer.limit())
         Logger.i("收到服务器发来消息：$data")
-        client?.receive()
+        client?.receive() //继续接收下一波数据
     }
 
     override fun failed(exc: Throwable?, client: AioClient?) {
