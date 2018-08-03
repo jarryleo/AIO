@@ -43,7 +43,7 @@ class Packet() {
     //数据包是否完整
     fun isFull() = len == data!!.size
 
-    private var ver: Byte = 1
+    var ver: Byte = 1
     private var cmd: Short = 0
     private var len = 0
     var data: ByteArray? = null

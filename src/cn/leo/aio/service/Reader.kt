@@ -2,6 +2,7 @@ package cn.leo.aio.service
 
 import cn.leo.aio.header.Packet
 import cn.leo.aio.header.PacketFactory
+import cn.leo.aio.utils.Constant
 import cn.leo.aio.utils.Logger
 import java.nio.channels.CompletionHandler
 
@@ -19,6 +20,11 @@ class Reader : CompletionHandler<Int, Channel> {
                     notifyData(cache!!.data)
                     cache = packet
                 }
+            }
+            //校验数据包版本，不符合断开连接
+            if (Constant.checkVersion && cache!!.ver != Constant.version) {
+                channel.close()
+                return
             }
             //数据包完整后
             if (cache!!.isFull()) {

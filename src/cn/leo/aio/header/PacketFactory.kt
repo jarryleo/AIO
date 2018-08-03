@@ -28,7 +28,6 @@ object PacketFactory {
             val step = min(len - position, Constant.packetSize)
             list.add(ByteBuffer.wrap(data.copyOfRange(position, position + step)))
             position += step
-
         }
         return list
     }
