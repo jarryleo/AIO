@@ -63,8 +63,15 @@ class AioClient {
     fun send(data: ByteArray) {
         if (!client?.isOpen!!) return
         //val buf = ByteBuffer.wrap(data)
-        val buf = PacketFactory.encodePacketBuffer(data)
-        client?.write(buf, this, sender)
+        val bufList = PacketFactory.encodePacketBuffer(data)
+        //bufList.forEach { client?.write(it, this, sender) }
+        try {
+            var len = 0
+            bufList.forEach { len += client?.write(it)!!.get() }
+            sender.completed(len, this)
+        } catch (e: Exception) {
+            sender.failed(e, this)
+        }
     }
 
     //接收数据

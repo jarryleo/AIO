@@ -29,9 +29,14 @@ class Channel(var channel: AsynchronousSocketChannel) {
 
     fun send(data: ByteArray) {
         if (!channel.isOpen) return
-        //val buffer = ByteBuffer.wrap(data)
-        val buffer = PacketFactory.encodePacketBuffer(data)
-        channel.write(buffer, this, writer)
+        val bufList = PacketFactory.encodePacketBuffer(data)
+        try {
+            var len = 0
+            bufList.forEach { len += channel.write(it)!!.get() }
+            writer.completed(len, this)
+        } catch (e: Exception) {
+            writer.failed(e, this)
+        }
     }
 
     fun close() {

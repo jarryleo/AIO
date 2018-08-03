@@ -1,17 +1,36 @@
 package cn.leo.aio.header
 
+import cn.leo.aio.utils.Constant
 import java.nio.ByteBuffer
+import kotlin.math.min
 
 object PacketFactory {
 
 
-    fun encodePacketBuffer(data: ByteArray, cmd: Short = 0): ByteBuffer {
-        val magic = byteArrayOf(0x02, 0x05, 0x06)
-        val ver: Byte = 1
+    fun encodePacketBuffer(data: ByteArray, cmd: Short = 0): List<ByteBuffer> {
+        //数据头
+        val magic = Constant.magic
+        val ver: Byte = Constant.version
         val len = data.size
         val reverse = byteArrayOf(0x00, 0x00, 0x00, 0x00, 0x00, 0x00)
-        val packet = magic + ver + getByteArray(cmd) + getByteArray(len) + reverse + data
-        return ByteBuffer.wrap(packet)
+        //分包
+        val head = magic + ver + getByteArray(cmd) + getByteArray(len) + reverse
+        val packSize = Constant.packetSize - head.size
+        val list = ArrayList<ByteBuffer>()
+        //第一个包，携带头部
+        val min = min(len, packSize)
+        val dp1 = data.copyOf(min)
+        val packet = head + dp1
+        list.add(ByteBuffer.wrap(packet))
+        //剩余的包全是数据
+        var position = min
+        while (position < len - 1) {
+            val step = min(len - position, Constant.packetSize)
+            list.add(ByteBuffer.wrap(data.copyOfRange(position, position + step)))
+            position += step
+
+        }
+        return list
     }
 
     fun decodePacketBuffer(packet: ByteBuffer): Packet {
