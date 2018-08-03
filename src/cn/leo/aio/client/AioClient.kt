@@ -55,16 +55,14 @@ class AioClient {
     }
 
     //发送文本，默认UTF-8
-    fun send(msg: String) {
-        send(msg.toByteArray())
+    fun send(msg: String, cmd: Short = 0) {
+        send(msg.toByteArray(), cmd)
     }
 
     //发送字节数组
-    fun send(data: ByteArray) {
+    fun send(data: ByteArray, cmd: Short = 0) {
         if (!client?.isOpen!!) return
-        //val buf = ByteBuffer.wrap(data)
-        val bufList = PacketFactory.encodePacketBuffer(data)
-        //bufList.forEach { client?.write(it, this, sender) }
+        val bufList = PacketFactory.encodePacketBuffer(data, cmd)
         try {
             var len = 0
             bufList.forEach { len += client?.write(it)!!.get() }

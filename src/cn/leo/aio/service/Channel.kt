@@ -23,13 +23,13 @@ class Channel(var channel: AsynchronousSocketChannel) {
     }
 
 
-    fun send(msg: String) {
-        send(msg.toByteArray())
+    fun send(msg: String, cmd: Short = 0) {
+        send(msg.toByteArray(),cmd)
     }
 
-    fun send(data: ByteArray) {
+    fun send(data: ByteArray, cmd: Short = 0) {
         if (!channel.isOpen) return
-        val bufList = PacketFactory.encodePacketBuffer(data)
+        val bufList = PacketFactory.encodePacketBuffer(data, cmd)
         try {
             var len = 0
             bufList.forEach { len += channel.write(it)!!.get() }

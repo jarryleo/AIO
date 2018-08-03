@@ -19,20 +19,20 @@ class Receiver : CompletionHandler<Int, AioClient> {
             } else {
                 val packet = cache!!.addData(buffer!!)
                 if (packet != cache) {
-                    notifyData(cache!!.data)
+                    notifyData(cache!!.data, cache!!.cmd)
                     cache = packet
                 }
             }
             //数据包完整后
             if (cache!!.isFull()) {
-                notifyData(cache!!.data)
+                notifyData(cache!!.data, cache!!.cmd)
                 cache = null
             }
         }
         client?.receive() //继续接收下一波数据
     }
 
-    private fun notifyData(data: ByteArray?) {
+    private fun notifyData(data: ByteArray?, cmd: Short) {
         val msg = String(data!!)
         Logger.i("收到服务器发来消息：$msg")
     }

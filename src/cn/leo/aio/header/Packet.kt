@@ -25,6 +25,7 @@ class Packet() {
         }
     }
 
+    //组装数据包
     fun addData(packet: ByteBuffer): Packet {
         packet.flip()
         val array = packet.array().copyOf(packet.limit())
@@ -44,8 +45,8 @@ class Packet() {
     fun isFull() = len == data!!.size
 
     var ver: Byte = 1
-    private var cmd: Short = 0
-    private var len = 0
+    var cmd: Short = 0
+    var len = 0
     var data: ByteArray? = null
 
 }
