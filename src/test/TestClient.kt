@@ -8,9 +8,9 @@ object TestClient {
     fun main(args: Array<String>) {
         val client = AioClient()
         client.connect("127.0.0.1", 25678)
-        repeat(10000) {
-            AioClient().connect("127.0.0.1", 25678)
-        }
+        /*repeat(20000) {
+            AioClient().connect("118.89.48.219", 9000)
+        }*/
 
         while (true) {
             val scanner = Scanner(System.`in`)

@@ -1,12 +1,14 @@
 package cn.leo.aio.service
 
+import cn.leo.aio.header.PacketFactory
+import cn.leo.aio.utils.Constant
 import java.net.InetSocketAddress
 import java.nio.ByteBuffer
 import java.nio.channels.AsynchronousSocketChannel
 
 class Channel(var channel: AsynchronousSocketChannel) {
     val host = (channel.remoteAddress as InetSocketAddress).hostString!!
-    val buffer = ByteBuffer.allocate(1024)!!
+    val buffer = ByteBuffer.allocate(Constant.packetSize)!!
     private val reader = Reader()
     private val writer = Writer()
 
@@ -27,7 +29,8 @@ class Channel(var channel: AsynchronousSocketChannel) {
 
     fun send(data: ByteArray) {
         if (!channel.isOpen) return
-        val buffer = ByteBuffer.wrap(data)
+        //val buffer = ByteBuffer.wrap(data)
+        val buffer = PacketFactory.encodePacketBuffer(data)
         channel.write(buffer, this, writer)
     }
 

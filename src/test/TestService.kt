@@ -7,6 +7,5 @@ object TestService {
     fun main(args: Array<String>) {
         val service = AioService()
         service.start(25678)
-
     }
 }

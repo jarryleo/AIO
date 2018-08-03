@@ -1,6 +1,8 @@
 package cn.leo.aio.client
 
+import cn.leo.aio.header.PacketFactory
 import cn.leo.aio.service.Sender
+import cn.leo.aio.utils.Constant
 import cn.leo.aio.utils.Logger
 import java.net.InetSocketAddress
 import java.nio.ByteBuffer
@@ -12,7 +14,7 @@ import java.nio.channels.CompletionHandler
  * date : 2018/7/31 16:33
  */
 class AioClient {
-    val buffer = ByteBuffer.allocate(1024)!!
+    val buffer = ByteBuffer.allocate(Constant.packetSize)!!
     private var client: AsynchronousSocketChannel? = null
     private var serverAddress: InetSocketAddress? = null
     private val receiver = Receiver()
@@ -60,7 +62,8 @@ class AioClient {
     //发送字节数组
     fun send(data: ByteArray) {
         if (!client?.isOpen!!) return
-        val buf = ByteBuffer.wrap(data)
+        //val buf = ByteBuffer.wrap(data)
+        val buf = PacketFactory.encodePacketBuffer(data)
         client?.write(buf, this, sender)
     }
 

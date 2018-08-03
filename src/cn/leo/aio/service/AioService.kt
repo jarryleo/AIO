@@ -1,5 +1,6 @@
 package cn.leo.aio.service
 
+import cn.leo.aio.utils.Constant
 import cn.leo.aio.utils.Logger
 import cn.leo.aio.utils.ThreadPool
 import java.net.InetSocketAddress
@@ -31,7 +32,7 @@ class AioService {
 
     //异步接入方法
     private fun asyncAccept() {
-        val buffer = ByteBuffer.allocate(1024)
+        val buffer = ByteBuffer.allocate(Constant.packetSize)
         service.accept(buffer, handler)
     }
 
