@@ -1,7 +1,7 @@
 package test
 
-import cn.leo.aio.service.AioServiceCore
 import cn.leo.aio.service.Client
+import cn.leo.aio.service.Service
 import cn.leo.aio.service.ServiceListener
 import cn.leo.aio.utils.Logger
 
@@ -9,8 +9,7 @@ object TestService : ServiceListener {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        val service = AioServiceCore()
-        service.start(25678, this)
+        Service.start(25678, this)
     }
 
     override fun onNewConnectComing(client: Client) {

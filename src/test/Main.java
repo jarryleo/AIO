@@ -1,14 +1,13 @@
 package test;
 
-import cn.leo.aio.service.AioServiceCore;
 import cn.leo.aio.service.Client;
+import cn.leo.aio.service.Service;
 import cn.leo.aio.service.ServiceListener;
 import org.jetbrains.annotations.NotNull;
 
 public class Main {
     public static void main(String[] args) {
-        AioServiceCore service = new AioServiceCore();
-        service.start(9000, new ServiceListener() {
+        Service.INSTANCE.start(9000, new ServiceListener() {
             @Override
             public void onNewConnectComing(@NotNull Client client) {
 

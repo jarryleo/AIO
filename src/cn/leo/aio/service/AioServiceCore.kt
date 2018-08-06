@@ -14,7 +14,7 @@ import java.nio.channels.CompletionHandler
 import java.util.*
 
 
-class AioServiceCore {
+internal class AioServiceCore {
     //并发线程池，根据业务自定义
     private val executorService = ThreadPool.getThreadPool()
     private val channelGroup = AsynchronousChannelGroup.withThreadPool(executorService)
