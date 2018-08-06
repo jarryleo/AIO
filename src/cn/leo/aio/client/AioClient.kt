@@ -1,7 +1,6 @@
 package cn.leo.aio.client
 
 import cn.leo.aio.header.PacketFactory
-import cn.leo.aio.service.Sender
 import cn.leo.aio.utils.Constant
 import cn.leo.aio.utils.Logger
 import java.net.InetSocketAddress
@@ -15,11 +14,11 @@ import java.nio.channels.CompletionHandler
  */
 class AioClient {
     val buffer = ByteBuffer.allocate(Constant.packetSize)!!
+    private var lastHeartStamp: Long = 0
     private var client: AsynchronousSocketChannel? = null
     private var serverAddress: InetSocketAddress? = null
     private val receiver = Receiver()
     private val sender = Sender()
-
 
     fun connect(host: String, port: Int) {
         serverAddress = InetSocketAddress(host, port)
@@ -36,11 +35,12 @@ class AioClient {
             object : CompletionHandler<Void, ByteBuffer> {
                 override fun completed(p0: Void?, p1: ByteBuffer?) {
                     receive()//开始接收数据
+                    Heart(this@AioClient)//开启心跳
                     Logger.d("连接服务器成功")
                 }
 
                 override fun failed(p0: Throwable?, p1: ByteBuffer?) {
-                    connect()//重连，这里可以设置重连间隔递增和超时操作
+                    reconnect()
                     Logger.e("连接失败！" + p0.toString())
                 }
             }
@@ -51,6 +51,17 @@ class AioClient {
             client?.close()
         } catch (e: Exception) {
 
+        } finally {
+            reconnect()
+        }
+    }
+
+    //重连
+    fun reconnect() {
+        try {
+            Thread.sleep(5000)
+        } finally {
+            connect()//重连，这里可以设置重连间隔递增和超时操作
         }
     }
 
@@ -67,6 +78,7 @@ class AioClient {
             var len = 0
             bufList.forEach { len += client?.write(it)!!.get() }
             sender.completed(len, this)
+            lastHeartStamp = System.currentTimeMillis()
         } catch (e: Exception) {
             sender.failed(e, this)
         }
@@ -77,5 +89,12 @@ class AioClient {
         if (!client?.isOpen!!) return
         buffer.clear()
         client?.read(buffer, this, receiver)
+    }
+
+    //心跳
+    fun heart() {
+        if (System.currentTimeMillis() - lastHeartStamp > 15 * 1000) {
+            send("${System.currentTimeMillis()}", Constant.heartCmd)
+        }
     }
 }

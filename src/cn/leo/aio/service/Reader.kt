@@ -31,15 +31,17 @@ class Reader : CompletionHandler<Int, Channel> {
                 notifyData(channel, cache!!.data, cache!!.cmd)
                 cache = null
             }
+            channel.read() //继续接收下一波数据
+        } else {
+            channel?.close()
         }
-        channel?.read() //继续接收下一波数据
     }
 
     private fun notifyData(channel: Channel?, data: ByteArray?, cmd: Short) {
         //是心跳数据包过滤数据，刷新链接心跳时间
         channel!!.refreshHeart()
         if (cmd == Constant.heartCmd) {
-            channel!!.send("", Constant.heartCmd) //回复客户端心跳
+            channel.send("${System.currentTimeMillis()}", Constant.heartCmd) //回复客户端心跳
             return
         }
         val msg = String(data!!)
@@ -47,7 +49,7 @@ class Reader : CompletionHandler<Int, Channel> {
     }
 
     override fun failed(exc: Throwable?, channel: Channel?) {
-        Logger.e(exc.toString())
+        Logger.e("${channel?.host}读取错误：${exc.toString()}")
         channel?.close()
     }
 }

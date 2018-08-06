@@ -52,12 +52,12 @@ class Channel(var channel: AsynchronousSocketChannel) {
         }
     }
 
+    //断开连接
     fun close() {
         try {
             ChannelManager.remove(this)
             channel.close()
         } catch (e: Exception) {
-
         }
     }
 }

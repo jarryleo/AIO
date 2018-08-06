@@ -12,8 +12,10 @@ object ChannelManager {
     }
 
     fun remove(channel: Channel) {
-        channelList.remove(channel)
-        Logger.d("有客户端断开:${channel.host}[总:${channelList.size}]")
+        val remove = channelList.remove(channel)
+        if (remove) {
+            Logger.d("有客户端断开:${channel.host}[总:${channelList.size}]")
+        }
     }
 
     fun sendMsgToAll(data: ByteArray) {

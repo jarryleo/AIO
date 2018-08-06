@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object Logger {
-
+    const val debug = true
     private val currentTime: String
         get() {
             val sdf = SimpleDateFormat("[yyyy-MM-dd HH:mm:ss-SSS]")
@@ -12,14 +12,21 @@ object Logger {
         }
 
     fun i(msg: String) {
-        println(currentTime + "Information:" + msg)
+        print(currentTime + "Information:" + msg)
     }
 
     fun d(msg: String) {
-        println(currentTime + "Debug:" + msg)
+        print(currentTime + "Debug:" + msg)
     }
 
     fun e(msg: String) {
-        println(currentTime + "Error:" + msg)
+        print(currentTime + "Error:" + msg)
     }
+
+    fun print(msg: String) {
+        if (debug) {
+            println(currentTime + "Error:" + msg)
+        }
+    }
+
 }

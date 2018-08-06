@@ -5,12 +5,12 @@ import java.nio.channels.CompletionHandler
 
 
 class Writer : CompletionHandler<Int, Channel> {
-    override fun completed(result: Int?, attachment: Channel?) {
+    override fun completed(result: Int?, channel: Channel?) {
         Logger.d("发送成功")
     }
 
-    override fun failed(exc: Throwable?, attachment: Channel?) {
-        Logger.e(exc.toString())
-        attachment?.close()
+    override fun failed(exc: Throwable?, channel: Channel?) {
+        Logger.e("${channel?.host}写入错误：${exc.toString()}")
+        channel?.close()
     }
 }

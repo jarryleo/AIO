@@ -2,6 +2,7 @@ package cn.leo.aio.client
 
 import cn.leo.aio.header.Packet
 import cn.leo.aio.header.PacketFactory
+import cn.leo.aio.utils.Constant
 import cn.leo.aio.utils.Logger
 import java.nio.ByteBuffer
 import java.nio.channels.CompletionHandler
@@ -28,17 +29,23 @@ class Receiver : CompletionHandler<Int, AioClient> {
                 notifyData(cache!!.data, cache!!.cmd)
                 cache = null
             }
+            client.receive() //继续接收下一波数据
+        } else {
+            client?.close()
         }
-        client?.receive() //继续接收下一波数据
+
     }
 
     private fun notifyData(data: ByteArray?, cmd: Short) {
+        if (cmd == Constant.heartCmd) {
+            return
+        }
         val msg = String(data!!)
         Logger.i("收到服务器发来消息：$msg")
     }
 
     override fun failed(exc: Throwable?, client: AioClient?) {
         client?.close()
-        Logger.e(exc.toString())
+        Logger.e("读取失败：" + exc.toString())
     }
 }

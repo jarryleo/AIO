@@ -1,6 +1,5 @@
-package cn.leo.aio.service
+package cn.leo.aio.client
 
-import cn.leo.aio.client.AioClient
 import cn.leo.aio.utils.Logger
 import java.nio.channels.CompletionHandler
 
@@ -12,6 +11,6 @@ class Sender : CompletionHandler<Int, AioClient> {
 
     override fun failed(exc: Throwable?, client: AioClient?) {
         client?.close()
-        Logger.e(exc.toString())
+        Logger.e("发送失败：" + exc.toString())
     }
 }

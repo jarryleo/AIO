@@ -5,6 +5,7 @@ import cn.leo.aio.utils.Constant
 import cn.leo.aio.utils.Logger
 import cn.leo.aio.utils.ThreadPool
 import java.net.InetSocketAddress
+import java.net.StandardSocketOptions
 import java.nio.ByteBuffer
 import java.nio.channels.AsynchronousChannelGroup
 import java.nio.channels.AsynchronousServerSocketChannel
@@ -22,13 +23,16 @@ class AioService {
     fun start(port: Int) {
         val serverAddress = InetSocketAddress(port)
         try {
+            //通过setOption配置Socket
+            service.setOption(StandardSocketOptions.SO_REUSEADDR, true)//重用地址
+            service.setOption(StandardSocketOptions.SO_RCVBUF, Constant.packetSize)
             service.bind(serverAddress)
             asyncAccept()
             checkHeart()
             Logger.i("服务器开启成功(端口号:$port)")
             command()
         } catch (e: Exception) {
-            Logger.e(e.toString())
+            Logger.e("服务器开启错误：" + e.toString())
         }
     }
 
@@ -48,7 +52,7 @@ class AioService {
                 }
 
                 override fun failed(p0: Throwable?, p1: ByteBuffer?) {
-                    Logger.e(p0.toString())
+                    Logger.e("接入错误：" + p0.toString())
                 }
             }
 
