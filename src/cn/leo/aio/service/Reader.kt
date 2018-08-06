@@ -49,7 +49,7 @@ class Reader(private val serviceListener: ServiceListener) : CompletionHandler<I
     }
 
     override fun failed(exc: Throwable?, channel: Channel?) {
-        Logger.e("${channel?.host}读取错误：${exc.toString()}")
+        //Logger.e("${channel?.host}读取错误：${exc.toString()}")
         channel?.close()
     }
 }

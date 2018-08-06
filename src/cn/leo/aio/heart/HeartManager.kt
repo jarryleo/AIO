@@ -3,6 +3,7 @@ package cn.leo.aio.heart
 import cn.leo.aio.service.Channel
 import cn.leo.aio.service.ChannelManager
 import cn.leo.aio.utils.Constant
+import cn.leo.aio.utils.Logger
 import java.util.*
 
 object HeartManager : TimerTask() {
@@ -12,6 +13,7 @@ object HeartManager : TimerTask() {
         trim()
     }
 
+    @Synchronized
     fun reflow(channel: Channel) {
         lru[channel] = channel.heartStamp
     }
@@ -24,17 +26,21 @@ object HeartManager : TimerTask() {
                 val next = iterator.next()
                 val channel = next.key
                 val contains = ChannelManager.contains(channel)
-                if (!contains) iterator.remove()
+                if (!contains) {
+                    iterator.remove()
+                    continue
+                }
                 val timestamp = next.value
                 if (System.currentTimeMillis() - timestamp > Constant.heartTimeOut) {
-                    channel.close()
                     iterator.remove()
+                    channel.close()
                 } else {
                     break
                 }
             }
         } catch (e: Exception) {
-            Timer().schedule(HeartManager, Constant.heartTimeOut, Constant.heartTimeOut)
+            Logger.e("心跳错误[${lru.size}]:")
+            e.printStackTrace()
         }
 
     }

@@ -13,7 +13,7 @@ class Heart(var client: AioClient) : TimerTask() {
             timer!!.cancel()
         }
         timer = Timer()
-        timer!!.schedule(this, Constant.heartTimeOut / 2, Constant.heartTimeOut / 2)
+        timer!!.schedule(this, Constant.heartTimeOut / 2 - 1, Constant.heartTimeOut / 2 - 1)
     }
 
     override fun run() {

@@ -45,6 +45,6 @@ class Receiver(var clientListener: ClientListener) : CompletionHandler<Int, AioC
 
     override fun failed(exc: Throwable?, client: AioClient?) {
         client?.close()
-        Logger.e("读取失败：" + exc.toString())
+        //Logger.e("读取失败：" + exc.toString())
     }
 }
