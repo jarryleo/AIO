@@ -14,14 +14,16 @@ import java.nio.channels.CompletionHandler
 import java.util.*
 
 
-class AioService {
+class AioServiceCore {
     //并发线程池，根据业务自定义
     private val executorService = ThreadPool.getThreadPool()
     private val channelGroup = AsynchronousChannelGroup.withThreadPool(executorService)
     private val service = AsynchronousServerSocketChannel.open(channelGroup)
+    private var mServiceListener: ServiceListener? = null
 
-    fun start(port: Int) {
+    fun start(port: Int, serviceListener: ServiceListener) {
         val serverAddress = InetSocketAddress(port)
+        mServiceListener = serviceListener
         try {
             //通过setOption配置Socket
             service.setOption(StandardSocketOptions.SO_REUSEADDR, true)//重用地址
@@ -47,7 +49,7 @@ class AioService {
             object : CompletionHandler<AsynchronousSocketChannel, ByteBuffer> {
                 override fun completed(client: AsynchronousSocketChannel?, p1: ByteBuffer?) {
                     asyncAccept()
-                    val channel = Channel(client!!)
+                    val channel = Channel(client!!, mServiceListener!!)
                     ChannelManager.add(channel)
                 }
 

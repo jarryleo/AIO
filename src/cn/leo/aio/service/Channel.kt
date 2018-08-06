@@ -7,7 +7,7 @@ import java.net.InetSocketAddress
 import java.nio.ByteBuffer
 import java.nio.channels.AsynchronousSocketChannel
 
-class Channel(var channel: AsynchronousSocketChannel) {
+class Channel(var channel: AsynchronousSocketChannel, serviceListener: ServiceListener) {
     //客户端地址
     val host = (channel.remoteAddress as InetSocketAddress).hostString!!
     val buffer = ByteBuffer.allocate(Constant.packetSize)!!
@@ -16,7 +16,7 @@ class Channel(var channel: AsynchronousSocketChannel) {
     //上次心跳时间
     var heartStamp: Long = 0
     //通信回调
-    private val reader = Reader()
+    private val reader = Reader(serviceListener)
     private val writer = Writer()
 
     init {

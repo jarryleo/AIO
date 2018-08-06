@@ -7,7 +7,7 @@ import cn.leo.aio.utils.Logger
 import java.nio.channels.CompletionHandler
 
 
-class Reader : CompletionHandler<Int, Channel> {
+class Reader(private val serviceListener: ServiceListener) : CompletionHandler<Int, Channel> {
     private var cache: Packet? = null
     override fun completed(result: Int?, channel: Channel?) {
         if (result!! >= 0) {
@@ -44,8 +44,8 @@ class Reader : CompletionHandler<Int, Channel> {
             channel.send("${System.currentTimeMillis()}", Constant.heartCmd) //回复客户端心跳
             return
         }
-        val msg = String(data!!)
-        Logger.i("收到客户端发来消息：$msg")
+        val client = ChannelManager.getClient(channel)
+        serviceListener.onDataArrived(client!!, data!!, cmd)
     }
 
     override fun failed(exc: Throwable?, channel: Channel?) {
