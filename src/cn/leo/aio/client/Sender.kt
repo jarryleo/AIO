@@ -6,7 +6,7 @@ import java.nio.channels.CompletionHandler
 
 class Sender : CompletionHandler<Int, AioClient> {
     override fun completed(result: Int?, client: AioClient?) {
-        Logger.d("发送成功")
+        //Logger.d("发送成功")
     }
 
     override fun failed(exc: Throwable?, client: AioClient?) {

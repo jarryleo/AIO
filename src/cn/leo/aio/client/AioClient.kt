@@ -93,7 +93,7 @@ class AioClient {
 
     //心跳
     fun heart() {
-        if (System.currentTimeMillis() - lastHeartStamp > 15 * 1000) {
+        if (System.currentTimeMillis() - lastHeartStamp > Constant.heartTimeOut / 2) {
             send("${System.currentTimeMillis()}", Constant.heartCmd)
         }
     }
