@@ -1,5 +1,6 @@
 package cn.leo.aio.service
 
+import cn.leo.aio.heart.HeartManager
 import cn.leo.aio.utils.Constant
 import cn.leo.aio.utils.Logger
 import cn.leo.aio.utils.ThreadPool
@@ -23,6 +24,7 @@ class AioService {
         try {
             service.bind(serverAddress)
             asyncAccept()
+            checkHeart()
             Logger.i("服务器开启成功(端口号:$port)")
             command()
         } catch (e: Exception) {
@@ -49,6 +51,11 @@ class AioService {
                     Logger.e(p0.toString())
                 }
             }
+
+    //开启心跳检测
+    private fun checkHeart() {
+        Timer().schedule(HeartManager, Constant.heartTimeOut, Constant.heartTimeOut)
+    }
 
     //主线程阻塞
     private fun command() {

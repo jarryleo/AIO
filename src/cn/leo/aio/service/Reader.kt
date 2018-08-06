@@ -8,7 +8,7 @@ import java.nio.channels.CompletionHandler
 
 
 class Reader : CompletionHandler<Int, Channel> {
-    var cache: Packet? = null
+    private var cache: Packet? = null
     override fun completed(result: Int?, channel: Channel?) {
         if (result!! >= 0) {
             val buffer = channel?.buffer
@@ -17,7 +17,7 @@ class Reader : CompletionHandler<Int, Channel> {
             } else {
                 val packet = cache!!.addData(buffer!!)
                 if (packet != cache) {
-                    notifyData(cache!!.data, cache!!.cmd)
+                    notifyData(channel, cache!!.data, cache!!.cmd)
                     cache = packet
                 }
             }
@@ -28,14 +28,20 @@ class Reader : CompletionHandler<Int, Channel> {
             }
             //数据包完整后
             if (cache!!.isFull()) {
-                notifyData(cache!!.data, cache!!.cmd)
+                notifyData(channel, cache!!.data, cache!!.cmd)
                 cache = null
             }
         }
         channel?.read() //继续接收下一波数据
     }
 
-    private fun notifyData(data: ByteArray?, cmd: Short) {
+    private fun notifyData(channel: Channel?, data: ByteArray?, cmd: Short) {
+        //是心跳数据包过滤数据，刷新链接心跳时间
+        channel!!.refreshHeart()
+        if (cmd == Constant.heartCmd) {
+            channel!!.send("", Constant.heartCmd) //回复客户端心跳
+            return
+        }
         val msg = String(data!!)
         Logger.i("收到客户端发来消息：$msg")
     }

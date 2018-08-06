@@ -19,4 +19,6 @@ object ChannelManager {
     fun sendMsgToAll(data: ByteArray) {
         channelList.forEach { it.send(data) }
     }
+
+    fun contains(channel: Channel) = channelList.contains(channel)
 }
