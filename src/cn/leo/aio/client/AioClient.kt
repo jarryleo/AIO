@@ -17,10 +17,13 @@ class AioClient {
     private var lastHeartStamp: Long = 0
     private var client: AsynchronousSocketChannel? = null
     private var serverAddress: InetSocketAddress? = null
-    private val receiver = Receiver()
+    private lateinit var receiver: Receiver
     private val sender = Sender()
+    private var mClientListener: ClientListener? = null
 
-    fun connect(host: String, port: Int) {
+    fun connect(host: String, port: Int, clientListener: ClientListener) {
+        mClientListener = clientListener
+        receiver = Receiver(clientListener)
         serverAddress = InetSocketAddress(host, port)
         connect()
     }
@@ -36,12 +39,14 @@ class AioClient {
                 override fun completed(p0: Void?, p1: ByteBuffer?) {
                     receive()//开始接收数据
                     Heart(this@AioClient)//开启心跳
+                    mClientListener?.onConnectSuccess()
                     Logger.d("连接服务器成功")
                 }
 
                 override fun failed(p0: Throwable?, p1: ByteBuffer?) {
-                    reconnect()
                     Logger.e("连接失败！" + p0.toString())
+                    mClientListener?.onConnectFailed()
+                    reconnect()
                 }
             }
 
@@ -50,7 +55,7 @@ class AioClient {
         try {
             client?.close()
         } catch (e: Exception) {
-
+            mClientListener?.onConnectInterrupt()
         } finally {
             reconnect()
         }

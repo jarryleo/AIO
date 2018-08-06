@@ -32,7 +32,6 @@ internal class AioServiceCore {
             asyncAccept()
             checkHeart()
             Logger.i("服务器开启成功(端口号:$port)")
-            command()
         } catch (e: Exception) {
             Logger.e("服务器开启错误：" + e.toString())
         }
@@ -61,15 +60,6 @@ internal class AioServiceCore {
     //开启心跳检测
     private fun checkHeart() {
         Timer().schedule(HeartManager, Constant.heartTimeOut, Constant.heartTimeOut)
-    }
-
-    //主线程阻塞
-    private fun command() {
-        while (true) {
-            val scanner = Scanner(System.`in`)
-            val command = scanner.next()
-            ChannelManager.sendMsgToAll(command.toByteArray())
-        }
     }
 
 }

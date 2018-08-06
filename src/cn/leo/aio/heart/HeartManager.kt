@@ -18,19 +18,24 @@ object HeartManager : TimerTask() {
 
     //心跳超时检测
     private fun trim() {
-        val iterator = lru.iterator()
-        while (iterator.hasNext()) {
-            val next = iterator.next()
-            val channel = next.key
-            val contains = ChannelManager.contains(channel)
-            if (!contains) iterator.remove()
-            val timestamp = next.value
-            if (System.currentTimeMillis() - timestamp > Constant.heartTimeOut) {
-                channel.close()
-                iterator.remove()
-            } else {
-                break
+        try {
+            val iterator = lru.iterator()
+            while (iterator.hasNext()) {
+                val next = iterator.next()
+                val channel = next.key
+                val contains = ChannelManager.contains(channel)
+                if (!contains) iterator.remove()
+                val timestamp = next.value
+                if (System.currentTimeMillis() - timestamp > Constant.heartTimeOut) {
+                    channel.close()
+                    iterator.remove()
+                } else {
+                    break
+                }
             }
+        } catch (e: Exception) {
+            Timer().schedule(HeartManager, Constant.heartTimeOut, Constant.heartTimeOut)
         }
+
     }
 }

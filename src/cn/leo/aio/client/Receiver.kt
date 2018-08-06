@@ -8,7 +8,7 @@ import java.nio.ByteBuffer
 import java.nio.channels.CompletionHandler
 
 
-class Receiver : CompletionHandler<Int, AioClient> {
+class Receiver(var clientListener: ClientListener) : CompletionHandler<Int, AioClient> {
     var cache: Packet? = null
 
     //接收数据成功，result是数据长度，-1表示异常
@@ -40,8 +40,7 @@ class Receiver : CompletionHandler<Int, AioClient> {
         if (cmd == Constant.heartCmd) {
             return
         }
-        val msg = String(data!!)
-        Logger.i("收到服务器发来消息：$msg")
+        clientListener.onDataArrived(data!!, cmd)
     }
 
     override fun failed(exc: Throwable?, client: AioClient?) {

@@ -25,7 +25,7 @@ object Logger {
 
     fun print(msg: String) {
         if (debug) {
-            println(currentTime + "Error:" + msg)
+            println(msg)
         }
     }
 
