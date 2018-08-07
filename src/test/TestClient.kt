@@ -11,7 +11,7 @@ object TestClient : ClientListener {
     @JvmStatic
     fun main(args: Array<String>) {
         val client = AioClient()
-        client.connect("127.0.0.1", 25678, this)
+        client.connect("127.0.0.1", 25627, this)
         while (true) {
             val scanner = Scanner(System.`in`)
             val msg = scanner.next()
